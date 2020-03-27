@@ -1,6 +1,6 @@
 const db = require('../config/database');
 const Sequelize = require('sequelize');
-const DataTable = require('../helpers/MyData');
+const DataTable = require('../helpers/DataTable');
 const User = require('../models/User');
 const { hashSync, genSaltSync } = require("bcrypt");
 //handle error Access has been denied to resolve the property “from” because it is not an “own property” of its parent 
