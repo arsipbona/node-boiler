@@ -5,12 +5,12 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Blank Page</h1>
+                    <h1>Users</h1>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
                         <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Blank Page</li>
+                        <li class="breadcrumb-item active">Users</li>
                     </ol>
                 </div>
             </div>
@@ -23,24 +23,23 @@
         <!-- Default box -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Title</h3>
+                <h3 class="card-title">Data User</h3>
 
                 <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                        <i class="fas fa-minus"></i></button>
-                    <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
-                        <i class="fas fa-times"></i></button>
+                    <button class="btn btn-success openModal" data-type="add">Add </button>
+                    {{!-- data-toggle="modal" data-target="#modalAdd" --}}
                 </div>
             </div>
             <div class="card-body">
-                <div class="table-responsive mt-5">
+                {{> message}}
+                <div class="table-responsive ">
                     <table class="table table-bordered table-striped table-hover users-table mb-2">
                         <thead>
                             <tr>
                                 <th>Name</th>
                                 <th>Handphone</th>
-                                <th>Password</th>
                                 <th>Is Active</th>
+                                <th>#</th>
                             </tr>
                         </thead>
 
@@ -58,18 +57,53 @@
 </div>
 {{> datatable}}
 <!-- /.content-wrapper -->
-<script>
+{{!-- modal --}}
+<div id="modalSection">
+    <div id="form"></div>
+</div>
+{{!-- end modal --}}
 
+<script>
+    {{!-- $("#btnAdd").on('click',()=>{
+        $("#form").load('/users/modalAdd',()=>{
+            $("#modalForm").modal("show");
+        });
+    });
+    $(".btnEdit").on('click',()=>{
+        console.log("edit");
+        const id = $(this).data('id');
+        alert(id);
+    }) --}}
+    $(document).on('click','.openModal',function(){
+        const type = $(this).data('type');
+        if(type=='add'){
+            $("#form").load('/users/add',()=>{
+                $("#modalForm").modal("show");
+            });            
+        }else if(type=='edit'){
+            const url = $(this).data('id');
+            $("#form").load(url,()=>{
+                $("#modalForm").modal("show");
+            }); 
+        }else if(type=='delete'){
+            const url = $(this).data('id');
+            $("#form").load(url,()=>{
+                $("#modalForm").modal("show");
+            }); 
+        }
+    });
     $(".users-table").DataTable({
         scrollY: 400,
         processing: true,
         serverSide: true,
         ajax: {
-            url: "/users/data",
-            error: function (jqXHR, ajaxOptions, thrownError) {
-
-                console.log(thrownError + "\r\n" + jqXHR.statusText + "\r\n" + jqXHR.responseText + "\r\n" + ajaxOptions.responseText);
-            }
-        }
+            url: "/users/data"
+        },"columnDefs": [
+            {
+                "targets": [ -1 ],
+                "orderable": false,
+                "searchable":false,
+            },
+        ]
     });
 </script>

@@ -2,7 +2,7 @@ const db = require('../config/database');
 const Sequelize = require('sequelize');
 const DataTable = require('../helpers/MyData');
 const User = require('../models/User');
-const Op = Sequelize.Op;
+const { hashSync, genSaltSync } = require("bcrypt");
 //handle error Access has been denied to resolve the property “from” because it is not an “own property” of its parent 
 const userContext = (data) => {
     return {
@@ -22,18 +22,16 @@ module.exports = {
         User.findAll()
             .then(async users => {
                 res.render('users/index', {
-                    users: userContext(users).userData
+                    users: userContext(users).userData,
+                    error: req.flash('error') ,
+                    success: req.flash('success')
+                    , user:req.user
                 });
             }).catch(err => console.log(err));
     },
-    getByName:(req,res)=>{
-        // User.findOne({
-        //     where: {name: req.name}
-        // }).then()
-    },
+    // for datatable
     getsJson: (req, res, next) => {
         const requestQuery = req.query;
-        // const requestQuery = { "draw": "1", "columns": [{ "data": "0", "name": "", "searchable": "true", "orderable": "true", "search": { "value": "", "regex": "false" } }, { "data": "1", "name": "", "searchable": "true", "orderable": "true", "search": { "value": "", "regex": "false" } }, { "data": "2", "name": "", "searchable": "true", "orderable": "true", "search": { "value": "", "regex": "false" } }, { "data": "3", "name": "", "searchable": "true", "orderable": "true", "search": { "value": "", "regex": "false" } }, { "data": "4", "name": "", "searchable": "true", "orderable": "true", "search": { "value": "", "regex": "false" } }], "order": [{ "column": "0", "dir": "asc" }], "start": "0", "length": "10", "search": { "value": "", "regex": "false" }, "_": "1585231508768" };
         const tableName = "users"
         const primaryKey = "id"
         let columnsMap = [
@@ -46,12 +44,8 @@ module.exports = {
                 dt: 1
             },
             {
-                db: "password",
-                dt: 2
-            },
-            {
                 db: "is_active",
-                dt: 3
+                dt: 2
             }
         ];
 
@@ -59,7 +53,7 @@ module.exports = {
 
         dataTable.output((err, data) => {
             if (err) {
-                console.log(err);
+                
                 res.send(500).json({
                     success: 0,
                     message: 'Data Error'
@@ -67,13 +61,80 @@ module.exports = {
             }
             res.send(data);
         })
-        // let output = {
-        //     draw: 0,
-        //     recordsTotal: 0,
-        //     recordsFiltered: 0,
-        //     data: requestQuery
-        // };
-        // res.json(output)
-        // res.send('dada' + JSON.stringify(requestQuery));
+    },
+    add:(req,res)=>{
+        let { name, handphone, password} = req.body;
+        const salt = genSaltSync(10);
+        password = hashSync(password, salt);
+        
+        User.create({
+            name,
+            handphone,
+            password
+          })
+            .then(user => {
+                req.flash('success','Add successfully');
+                res.redirect('/users');
+            })
+            .catch(err => {
+                req.flash('error','Something wrong try again')
+            });
+    },
+    edit:(req,res)=>{
+        const id = req.params.id;
+        let { name, handphone } = req.body;
+        User.update(
+            {
+                name,handphone
+            },
+            { where:{id:id}}
+        ).then(result =>{
+                req.flash('success','Update successfully');
+                res.redirect('/users');
+            }
+        )
+        .catch(err =>{
+            req.flash('error','Something wrong try again');
+            res.redirect('/users');
+            }
+        )
+    },
+    deletes:(req,res)=>{
+        const id = req.params.id;
+        User.destroy({
+            where: {
+                id:id
+            }
+        }).then(result =>{
+                req.flash('success','Delete successfully');
+                res.redirect('/users');
+            }
+        )
+        .catch(err =>{
+            req.flash('error','Something wrong try again');
+            res.redirect('/users');
+            }
+        )
+    },
+    modalAdd:(req,res)=>{
+        res.render('users/add', {layout:'modals'});
+    },
+    modalEdit:(req,res)=>{
+        const id = req.params.id;
+        User.findByPk(id).then((user)=> {
+            res.render('users/edit', {layout:'modals',user:user.get()});
+        }).catch(err=>{
+            req.flash('error','Something wrong try again');
+            res.redirect('/users');
+        })
+    },
+    modalDelete:(req,res)=>{
+        const id = req.params.id;
+        User.findByPk(id).then((user)=> {
+            res.render('users/delete', {layout:'modals',user:user.get()});
+        }).catch(err=>{
+            req.flash('error','Something wrong try again');
+            res.redirect('/users');
+        })
     }
 }

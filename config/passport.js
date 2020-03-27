@@ -1,5 +1,6 @@
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('../models/User');
+const {compareSync} = require('bcrypt');
 module.exports = (passport)=>{
     passport.serializeUser((user, done)=> {
         done(null, user.id);
@@ -23,8 +24,7 @@ module.exports = (passport)=>{
     },
     (req,name,password,done)=>{
         const isValidPassword = (userpass, password)=> {
-            return userpass==password;
-            // return bCrypt.compareSync(password, userpass);
+            return compareSync(password, userpass);
         }
         User.findOne({
             where:{

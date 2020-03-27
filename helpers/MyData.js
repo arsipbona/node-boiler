@@ -89,7 +89,7 @@ class DataTable {
             this.table = `(${this.table})temp`
         }
 
-        return `SELECT ${DataTable.pluck(this.columns, "db").join(", ")} FROM ${this.table} ${where} ${order} ${limit}`;
+        return `SELECT id,${DataTable.pluck(this.columns, "db").join(", ")} FROM ${this.table} ${where} ${order} ${limit}`;
     }
 
     async output(callback) {
@@ -135,10 +135,15 @@ class DataTable {
 
         data.forEach((ele, index) => {
             let row = new Object();
-
+            let idx=0;
             columns.forEach((column, i) => {
                 row[column["dt"]] = data[index][column["db"]];
+                idx++;
             });
+            row[idx]=`
+            <button  data-id="/users/edit/${data[index]['id']}" class="btn btn-warning openModal" data-type="edit" type="button"><span class="fas fa-edit"></span></button>
+            <button  data-id="/users/delete/${data[index]['id']}" class="btn btn-danger openModal" data-type="delete" type="button"><span class="fas fa-trash"></span></button>
+            `;
 
             out.push(row);
         });
