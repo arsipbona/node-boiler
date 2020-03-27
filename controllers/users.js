@@ -26,6 +26,11 @@ module.exports = {
                 });
             }).catch(err => console.log(err));
     },
+    getByName:(req,res)=>{
+        // User.findOne({
+        //     where: {name: req.name}
+        // }).then()
+    },
     getsJson: (req, res, next) => {
         const requestQuery = req.query;
         // const requestQuery = { "draw": "1", "columns": [{ "data": "0", "name": "", "searchable": "true", "orderable": "true", "search": { "value": "", "regex": "false" } }, { "data": "1", "name": "", "searchable": "true", "orderable": "true", "search": { "value": "", "regex": "false" } }, { "data": "2", "name": "", "searchable": "true", "orderable": "true", "search": { "value": "", "regex": "false" } }, { "data": "3", "name": "", "searchable": "true", "orderable": "true", "search": { "value": "", "regex": "false" } }, { "data": "4", "name": "", "searchable": "true", "orderable": "true", "search": { "value": "", "regex": "false" } }], "order": [{ "column": "0", "dir": "asc" }], "start": "0", "length": "10", "search": { "value": "", "regex": "false" }, "_": "1585231508768" };
