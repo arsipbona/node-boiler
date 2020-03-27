@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { 
-    gets, 
+    index, 
     getsJson,
     add,
     edit,
@@ -12,7 +12,7 @@ const {
 } = require('../controllers/users');
 const authAdmin = require('../middlewares/auth');
 
-router.get('/',authAdmin, gets);
+router.get('/', index);
 router.get('/data', getsJson);
 router.get('/add',modalAdd);
 router.get('/edit/:id',modalEdit);

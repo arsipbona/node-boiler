@@ -18,7 +18,7 @@ const userContext = (data) => {
 }
 
 module.exports = {
-    gets: (req, res) => {
+    index: (req, res) => {
         User.findAll()
             .then(async users => {
                 res.render('users/index', {

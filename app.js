@@ -9,8 +9,6 @@ const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const app = express();
 
-
-
 // Handlebars
 app.engine('handlebars', exphbs(
   { 
@@ -24,6 +22,11 @@ app.engine('handlebars', exphbs(
 ));
 app.set('view engine', 'handlebars');
 
+// handle back button when logout
+app.use(function (req, res, next) {
+  res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  next();
+});
 
 //flash message
 app.use(flash());
@@ -53,9 +56,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Index route
 app.get('/', (req, res) => res.render('login', { layout: 'login',error: req.flash('error') }));
+app.use('/auth',require('./routes/auth'));
+
+//middleware for auth router below this line
+const authLogin = require('./middlewares/auth');
+app.use(authLogin);
 // Users routes
 app.use('/users', require('./routes/users'));
-app.use('/auth',require('./routes/auth'));
 
 require('./config/passport')(passport);
 
@@ -70,6 +77,6 @@ app.use(function(err, req, res, next) {
 });
 
 
-const PORT = process.env.APP_PORT || 5000;
+const PORT = process.env.APP_PORT;
 
 app.listen(PORT, console.log(`Server started on port ${PORT}`));
