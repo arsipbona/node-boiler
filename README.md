@@ -89,7 +89,9 @@ npm install method-override
 
 1. `$ git clone https://github.com/arsipbona/node-boiler.git`
 2. `$ npm install`
-3. Launch Enviornment:
+3. Setting Database in `.env` file
+4. Import Sample Database `learn.sql`
+5. Launch Enviornment:
     * `$ node app.js or npm run dev`
-4. Open in browser:
+6. Open in browser:
     * open `http://localhost:5000`
